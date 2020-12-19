@@ -1,32 +1,22 @@
 # frozen_string_literal: true
 
-version =
+pkgs =
   case platform[:family]
-  when 'redhat'
-    case platform[:name]
-    when 'amazon'
-      '3000.1-1.amzn2'
-    when 'centos'
-      '3000.1-1.el8'
-    end
-  when 'fedora'
-    '3000.1-1.fc31'
-  when 'suse'
-    '3000-lp151.28.1'
-  when 'debian'
-    '3000.1+ds-1'
+  when 'windows'
+    %w[Salt\ Minion]
+  else
+    %w[salt-master salt-minion]
   end
 
 control 'salt packages' do
   title 'should be installed'
 
-  %w[
-    salt-master
-    salt-minion
-  ].each do |p|
+  version = '3000'
+
+  pkgs.each do |p|
     describe package(p) do
       it { should be_installed }
-      its('version') { should eq version }
+      its('version') { should match(/^#{version}/) }
     end
   end
 end
